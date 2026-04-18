@@ -13,7 +13,7 @@ export async function getOrCreateConfig(ownerAddress: string) {
     config = await prisma.payAgentConfig.create({
       data: {
         ownerAddress,
-        agentWalletAddress: `0x${ownerAddress.slice(2, 6)}...agent`,
+        agentWalletAddress: ownerAddress,
       },
       include: { rules: true },
     });
