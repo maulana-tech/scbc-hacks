@@ -1,0 +1,157 @@
+[
+  {
+    "inputs": [],
+    "name": "deactivateAgent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "agents",
+    "outputs": [
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "string", "name": "name", "type": "string" },
+      { "internalType": "string", "name": "serviceType", "type": "string" },
+      { "internalType": "string", "name": "metadataURI", "type": "string" },
+      { "internalType": "uint256", "name": "reputationScore", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalTxCount", "type": "uint256" },
+      { "internalType": "uint256", "name": "totalEarned", "type": "uint256" },
+      { "internalType": "bool", "name": "isActive", "type": "bool" },
+      { "internalType": "uint256", "name": "registeredAt", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "agentList",
+    "outputs": [
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAgentCount",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "serviceType", "type": "string" }
+    ],
+    "name": "getAgentsByType",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "agentAddress", "type": "address" }
+    ],
+    "name": "getAgent",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "owner", "type": "address" },
+          { "internalType": "string", "name": "name", "type": "string" },
+          { "internalType": "string", "name": "serviceType", "type": "string" },
+          { "internalType": "string", "name": "metadataURI", "type": "string" },
+          { "internalType": "uint256", "name": "reputationScore", "type": "uint256" },
+          { "internalType": "uint256", "name": "totalTxCount", "type": "uint256" },
+          { "internalType": "uint256", "name": "totalEarned", "type": "uint256" },
+          { "internalType": "bool", "name": "isActive", "type": "bool" },
+          { "internalType": "uint256", "name": "registeredAt", "type": "uint256" }
+        ],
+        "internalType": "struct AgentRegistry.AgentProfile",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "agentAddress", "type": "address" }
+    ],
+    "name": "getReputationScore",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "serviceType", "type": "string" },
+      { "internalType": "uint256", "name": "limit", "type": "uint256" }
+    ],
+    "name": "getTopAgents",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "name", "type": "string" },
+      { "internalType": "string", "name": "serviceType", "type": "string" },
+      { "internalType": "string", "name": "metadataURI", "type": "string" }
+    ],
+    "name": "registerAgent",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "agentAddress", "type": "address" },
+      { "internalType": "uint256", "name": "amountUSDC", "type": "uint256" }
+    ],
+    "name": "recordSuccessfulTx",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "agentAddress", "type": "address" },
+      { "indexed": false, "internalType": "string", "name": "name", "type": "string" },
+      { "indexed": false, "internalType": "string", "name": "serviceType", "type": "string" }
+    ],
+    "name": "AgentRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "agentAddress", "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "newScore", "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "txCount", "type": "uint256" }
+    ],
+    "name": "ReputationUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "agentAddress", "type": "address" }
+    ],
+    "name": "AgentDeactivated",
+    "type": "event"
+  }
+]
