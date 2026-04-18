@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/scheduler",
+      "schedule": "0 * * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/cron/scheduler",
+      "headers": [
+        { "key": "Authorization", "value": "Bearer ${CRON_SECRET}" }
+      ]
+    }
+  ]
+}
