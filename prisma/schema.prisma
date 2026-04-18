@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PayAgentConfig {
+  id            String   @id @default(cuid())
+  ownerAddress  String   @unique
+  agentWalletAddress String
+  dailySpendLimit   String @default("5.00")
+  weeklySpendLimit  String @default("20.00")
+  monthlySpendLimit String @default("50.00")
+  maxSinglePayment  String @default("2.00")
+  allowedRecipients String[] @default([])
+  blockedRecipients String[] @default([])
+  notifyOnEveryTx   Boolean @default(false)
+  notifyOnDailyLimit Boolean @default(true)
+  isPaused          Boolean @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  rules        SpendRule[]
+  transactions Transaction[]
+}
+
+model SpendRule {
+  id          String   @id @default(cuid())
+  configId    String
+  name        String
+  type        String   // "subscription" | "tip" | "donation" | "conditional"
+  recipientAgentId  String?
+  recipientAddress  String?
+  amount      String
+  scheduleFrequency String? // "daily" | "weekly" | "monthly" | "once"
+  scheduleDayOfWeek Int?
+  scheduleDayOfMonth Int?
+  scheduleTime      String?
+  conditionTrigger  String?  // "on_task_complete" | "on_reputation_increase" | "manual"
+  conditionMinReputation Float?
+  conditionMaxDailyTriggers Int?
+  enabled     Boolean  @default(true)
+  expiresAt   DateTime?
+  totalSpentToDate String @default("0.00")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  config      PayAgentConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  @@index([configId])
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  configId    String
+  ruleId      String?
+  type        String   // "subscription" | "tip" | "donation" | "payment" | "conditional"
+  recipientAddress String
+  amount      Decimal  @db.Decimal(18, 6)
+  txHash      String?
+  status      String   @default("completed") // "pending" | "completed" | "failed"
+  metadata    String?  // JSON string for extra info
+  createdAt   DateTime @default(now())
+
+  config      PayAgentConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  @@index([configId])
+  @@index([createdAt])
+}
+
+model AgentCache {
+  id          String   @id @default(cuid())
+  address     String   @unique
+  name        String
+  serviceType String
+  reputationScore Int   @default(0)
+  totalTxCount Int     @default(0)
+  totalEarned String   @default("0")
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
