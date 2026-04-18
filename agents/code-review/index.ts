@@ -1,23 +1,23 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { chat } from "@/lib/ai";
 import { CODE_REVIEW_SYSTEM_PROMPT, CODE_REVIEW_PROMPT } from "./prompts";
-
-const client = new Anthropic();
 
 export async function reviewCode(
   code: string,
   language: string,
   focus: string
-): Promise<{ issues: { line: number; severity: string; message: string }[]; score: number; summary: string }> {
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2048,
-    system: CODE_REVIEW_SYSTEM_PROMPT,
+): Promise<{
+  issues: { line: number; severity: string; message: string }[];
+  score: number;
+  summary: string;
+}> {
+  const { text } = await chat({
     messages: [
+      { role: "system", content: CODE_REVIEW_SYSTEM_PROMPT },
       { role: "user", content: CODE_REVIEW_PROMPT(code, language, focus) },
     ],
+    maxTokens: 2048,
   });
 
-  const text = message.content[0].type === "text" ? message.content[0].text : "";
   return JSON.parse(extractJSON(text));
 }
 
