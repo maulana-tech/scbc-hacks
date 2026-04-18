@@ -1,5 +1,24 @@
 import { prisma } from "../../lib/db";
 import { enforceSpendingLimits } from "../../lib/spend-enforcer";
+import { ethers } from "ethers";
+
+async function submitPayment(toAddress: string, amount: string): Promise<string> {
+  const provider = new ethers.JsonRpcProvider(
+    process.env.AVALANCHE_RPC_URL || "https://api.avax-test.network/ext/bc/C/rpc"
+  );
+  const wallet = new ethers.Wallet(process.env.PAY_AGENT_PRIVATE_KEY!, provider);
+
+  const USDC_ABI = ["function transfer(address to, uint256 amount) returns (bool)"];
+  const usdc = new ethers.Contract(
+    process.env.USDC_CONTRACT_ADDRESS!,
+    USDC_ABI,
+    wallet
+  );
+
+  const tx = await usdc.transfer(toAddress, ethers.parseUnits(amount, 6));
+  await tx.wait();
+  return tx.hash;
+}
 
 export async function executePayment(
   configId: string,
@@ -13,31 +32,44 @@ export async function executePayment(
     return { success: false, reason: result.reason };
   }
 
-  // In production, this would call submitPayment from scheduler.ts
-  // For now, simulate a successful payment
-  const txHash = `0x${Date.now().toString(16)}${Math.random().toString(16).slice(2, 10)}`;
+  try {
+    const txHash = await submitPayment(recipientAddress, amount);
 
-  await prisma.transaction.create({
-    data: {
-      configId,
-      ruleId,
-      type,
-      recipientAddress,
-      amount,
-      txHash,
-      status: "completed",
-    },
-  });
-
-  const rule = await prisma.spendRule.findUnique({ where: { id: ruleId } });
-  if (rule) {
-    await prisma.spendRule.update({
-      where: { id: ruleId },
+    await prisma.transaction.create({
       data: {
-        totalSpentToDate: (parseFloat(rule.totalSpentToDate) + parseFloat(amount)).toFixed(2),
+        configId,
+        ruleId,
+        type,
+        recipientAddress,
+        amount,
+        txHash,
+        status: "completed",
       },
     });
-  }
 
-  return { success: true, txHash };
+    const rule = await prisma.spendRule.findUnique({ where: { id: ruleId } });
+    if (rule) {
+      await prisma.spendRule.update({
+        where: { id: ruleId },
+        data: {
+          totalSpentToDate: (parseFloat(rule.totalSpentToDate) + parseFloat(amount)).toFixed(2),
+        },
+      });
+    }
+
+    return { success: true, txHash };
+  } catch (error) {
+    await prisma.transaction.create({
+      data: {
+        configId,
+        ruleId,
+        type,
+        recipientAddress,
+        amount,
+        status: "failed",
+        metadata: JSON.stringify({ error: String(error) }),
+      },
+    });
+    return { success: false, reason: `Payment failed: ${String(error)}` };
+  }
 }
