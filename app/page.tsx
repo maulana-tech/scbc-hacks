@@ -1,65 +1,133 @@
-import Image from "next/image";
+import AgentCard from "@/components/AgentCard";
+import { Zap, Shield, Globe } from "lucide-react";
 
-export default function Home() {
+const AGENTS = [
+  {
+    name: "Code Review",
+    serviceType: "code-review",
+    price: "0.05",
+    reputationScore: 847,
+    totalTxCount: 2341,
+    address: "0x0000…0001",
+    description: "Security, performance, and style analysis for any codebase.",
+  },
+  {
+    name: "Summarizer",
+    serviceType: "summarizer",
+    price: "0.02",
+    reputationScore: 923,
+    totalTxCount: 8472,
+    address: "0x0000…0002",
+    description: "Distill long texts into concise bullets, paragraphs, or TL;DR.",
+  },
+  {
+    name: "Translator",
+    serviceType: "translator",
+    price: "0.03",
+    reputationScore: 756,
+    totalTxCount: 5109,
+    address: "0x0000…0003",
+    description: "Context-aware translation across 50+ languages.",
+  },
+];
+
+export default function MarketplacePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      <section className="max-w-[1200px] mx-auto px-6 pt-24 pb-20">
+        <p className="type-caption text-accent mb-4">Avalanche C-Chain · x402 Payments</p>
+        <h1 className="type-display text-text mb-5">
+          AI agents you<br />can <span className="font-editorial">trust</span> on-chain.
+        </h1>
+        <p className="type-body text-text-2 max-w-[480px]">
+          Every request is a micro-payment in USDC. Every successful transaction
+          builds verifiable reputation via ERC-8004. No subscriptions. No surprises.
+        </p>
+        <div className="flex items-center gap-4 mt-7">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+            <span className="type-caption text-text-3">3 agents live</span>
+          </div>
+          <span className="type-caption text-text-3">Fuji Testnet · 43113</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <div className="border-t border-border" />
+
+      <section className="max-w-[1200px] mx-auto px-6 py-20">
+        <p className="type-caption text-text-3 mb-6">Available Agents</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {AGENTS.map((agent) => (
+            <AgentCard key={agent.serviceType} {...agent} />
+          ))}
         </div>
-      </main>
+      </section>
+
+      <div className="border-t border-border" />
+
+      <section className="max-w-[1200px] mx-auto px-6 py-20">
+        <p className="type-caption text-text-3 mb-6">How It Works</p>
+        <HowItWorks />
+      </section>
+
+      <div className="border-t border-border" />
+
+      <section className="max-w-[1200px] mx-auto px-6 py-20">
+        <p className="type-caption text-text-3 mb-6">Endpoints</p>
+        <div className="border border-border rounded-xl overflow-hidden">
+          {[
+            { method: "POST", path: "/api/agents/code-review", price: "0.05 USDC", desc: "Code analysis" },
+            { method: "POST", path: "/api/agents/summarize", price: "0.02 USDC", desc: "Text summarization" },
+            { method: "POST", path: "/api/agents/translate", price: "0.03 USDC", desc: "Translation" },
+            { method: "POST", path: "/api/agents/tip", price: "≥ 0.01 USDC", desc: "Send tip" },
+          ].map((ep, i) => (
+            <div
+              key={ep.path}
+              className={`flex items-center gap-4 px-5 py-3.5 ${i > 0 ? "border-t border-border" : ""} hover:bg-surface-hover transition-colors`}
+            >
+              <span className="font-mono text-[10px] font-bold text-accent bg-accent-subtle px-2 py-0.5 rounded-md">{ep.method}</span>
+              <span className="font-mono text-[13px] text-text-2 min-w-[220px]">{ep.path}</span>
+              <span className="text-[13px] text-text-3">{ep.price}</span>
+              <span className="text-[13px] text-text-3 ml-auto">{ep.desc}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="border-t border-border">
+        <div className="max-w-[1200px] mx-auto px-6 py-8 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-sm bg-accent flex items-center justify-center">
+              <span className="text-bg font-bold text-[8px]">A</span>
+            </div>
+            <span className="text-[12px] text-text-3">AgentMarket · SCBC Hackathon · Avalanche Track</span>
+          </div>
+          <span className="text-[11px] text-text-3 font-mono">ERC-8004 · x402 · Fuji</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function HowItWorks() {
+  const steps = [
+    { step: "01", title: "Request", body: "POST to any agent endpoint and receive a 402 payment requirement.", Icon: Zap },
+    { step: "02", title: "Pay", body: "Send USDC on Avalanche Fuji. Attach the tx hash as payment proof.", Icon: Shield },
+    { step: "03", title: "Result", body: "Agent verifies on-chain, executes via Claude, updates ERC-8004 reputation.", Icon: Globe },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+      {steps.map((s) => (
+        <div key={s.step} className="border-t border-accent pt-5">
+          <div className="flex items-center gap-3 mb-3">
+            <s.Icon size={16} className="text-accent" strokeWidth={1.5} />
+            <span className="font-mono text-[13px] text-accent">{s.step}</span>
+          </div>
+          <h3 className="type-subheading text-text mb-1.5">{s.title}</h3>
+          <p className="type-body-sm text-text-2">{s.body}</p>
+        </div>
+      ))}
     </div>
   );
 }
