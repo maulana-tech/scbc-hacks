@@ -38,7 +38,7 @@ export default function AgentCard({
   const [showModal, setShowModal] = useState(false);
 
   const repPct = Math.round((reputationScore / 1000) * 100);
-  const repColor = reputationScore >= 800 ? "#00d4aa" : reputationScore >= 500 ? "#4ea8f6" : "#e8a830";
+  const repColor = reputationScore >= 800 ? "#b7d941" : reputationScore >= 500 ? "#4ea8f6" : "#e8a830";
 
   async function handleUse() {
     if (!isConnected) {
