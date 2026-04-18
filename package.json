@@ -11,12 +11,15 @@
     "db:generate": "npx prisma generate",
     "db:push": "npx prisma db push",
     "db:studio": "npx prisma studio",
-    "deploy:contract": "npx tsx contracts/deploy.ts",
+    "deploy:contract": "npx tsx scripts/deploy-contracts.ts",
+    "compile": "npx tsx contracts/compile.ts",
     "seed": "npx tsx scripts/seed-testnet.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
     "@prisma/client": "^5.22.0",
+    "@rainbow-me/rainbowkit": "^2.2.10",
+    "@tanstack/react-query": "^5.99.0",
     "ethers": "^6.16.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
@@ -24,7 +27,9 @@
     "node-cron": "^4.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "viem": "^2.48.1",
+    "wagmi": "^3.6.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -35,6 +40,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "prisma": "^5.22.0",
+    "solc": "^0.8.34",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
