@@ -18,9 +18,9 @@
   --text: #fdfdfd;
   --text-2: #a0a0a2;
   --text-3: #666668;
-  --accent: #00d4aa;
-  --accent-hover: #00b894;
-  --accent-subtle: #00d4aa1a;
+  --accent: #b7d941;
+  --accent-hover: #a5c43a;
+  --accent-subtle: #b7d9411a;
   --red: #ef4444;
   --amber: #e8a830;
   --violet: #9b6dff;
@@ -57,7 +57,7 @@ body {
 }
 
 ::selection {
-  background: #00d4aa30;
+  background: #b7d94130;
   color: #fdfdfd;
 }
 
@@ -116,4 +116,35 @@ input, select, textarea, button {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-weight: 500;
+}
+
+@keyframes barGrow {
+  from {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+  to {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+}
+
+[data-rk] {
+  --rk-colors-accentColor: var(--accent) !important;
+  --rk-colors-generalBorder: var(--border) !important;
+  --rk-colors-modalBorder: var(--border) !important;
+  --rk-colors-modalBackground: var(--surface) !important;
+  --rk-colors-modalText: var(--text) !important;
+  --rk-colors-modalTextSecondary: var(--text-3) !important;
+  --rk-colors-profileForeground: var(--surface-hover) !important;
+  --rk-colors-closeButton: var(--text-3) !important;
+  --rk-colors-closeButtonBackground: transparent !important;
+  --rk-radii-modal: 0px !important;
+  --rk-radii-actionButton: 0px !important;
+  --rk-radii-connectButton: 0px !important;
+  --rk-shadows-modal: 0 4px 24px rgba(0,0,0,0.4) !important;
+}
+
+[data-rk] button {
+  border-radius: 0px !important;
 }
