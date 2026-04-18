@@ -1,6 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic();
+import { chat } from "@/lib/ai";
 
 export async function summarize(
   text: string,
@@ -13,18 +11,16 @@ export async function summarize(
     tldr: "as a one-line TL;DR",
   };
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 1024,
+  const { text: summary } = await chat({
     messages: [
       {
         role: "user",
         content: `Summarize the following text ${styleInstructions[style]}. Maximum ${maxLength} characters. Return ONLY the summary text, nothing else.\n\n${text}`,
       },
     ],
+    maxTokens: 1024,
   });
 
-  const summary = message.content[0].type === "text" ? message.content[0].text : "";
   return {
     summary: summary.trim(),
     wordCount: summary.trim().split(/\s+/).length,
