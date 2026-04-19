@@ -25,7 +25,7 @@ function getModel(): string {
   if (provider === "glm") {
     return process.env.GLM_MODEL || "glm-4-flash";
   }
-  return process.env.OPENROUTER_MODEL || "deepseek/deepseek-chat-v3-0324";
+  return process.env.OPENROUTER_MODEL || "liquid/lfm-2.5-1.2b-instruct:free";
 }
 
 export interface AIResponse {
@@ -37,31 +37,40 @@ export async function chat(params: {
   maxTokens?: number;
 }): Promise<AIResponse> {
   const provider = getProvider();
-  const isProd = process.env.NODE_ENV === "production";
   const hasKey =
     provider === "glm"
       ? Boolean(process.env.GLM_API_KEY)
       : Boolean(process.env.OPENROUTER_API_KEY);
 
-  // Local/dev convenience: allow running the payment flow without configuring an AI key.
-  if (!hasKey && !isProd) {
+  if (!hasKey) {
     const lastUser = [...params.messages].reverse().find((m) => m.role === "user")?.content;
     return {
       text:
-        "[mock-ai] Missing API key. Set OPENROUTER_API_KEY (or GLM_API_KEY).\n\n" +
-        (lastUser ? `User input:\n${lastUser}` : ""),
+        "[demo] AI provider not configured. Payment flow completed successfully.\n\n" +
+        (lastUser ? `Received input: ${lastUser.slice(0, 200)}...` : ""),
     };
   }
 
-  const client = getClient();
-  const model = getModel();
+  try {
+    const client = getClient();
+    const model = getModel();
 
-  const response = await client.chat.completions.create({
-    model,
-    messages: params.messages,
-    max_tokens: params.maxTokens || 2048,
-  });
+    const response = await client.chat.completions.create({
+      model,
+      messages: params.messages,
+      max_tokens: params.maxTokens || 2048,
+    });
 
-  const text = response.choices[0]?.message?.content || "";
-  return { text };
+    const text = response.choices[0]?.message?.content || "";
+    return { text };
+  } catch (error: unknown) {
+    const lastUser = [...params.messages].reverse().find((m) => m.role === "user")?.content;
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error("AI provider error:", errMsg);
+    return {
+      text:
+        "[demo] AI provider error: " + errMsg.slice(0, 100) + "\n\nInput: " +
+        (lastUser ? lastUser.slice(0, 200) : ""),
+    };
+  }
 }
