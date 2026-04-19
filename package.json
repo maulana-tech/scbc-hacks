@@ -14,8 +14,7 @@
     "db:studio": "npx prisma studio",
     "deploy:contract": "npx tsx scripts/deploy-contracts.ts",
     "compile": "npx tsx contracts/compile.ts",
-    "seed": "npx tsx scripts/seed-testnet.ts"
-    ,
+    "seed": "npx tsx scripts/seed-testnet.ts",
     "faucet:usdc": "npx tsx scripts/faucet-mockusdc.ts"
   },
   "dependencies": {
