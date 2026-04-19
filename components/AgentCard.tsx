@@ -78,8 +78,6 @@ export default function AgentCard({
 
     const { ok, data, error } = await payAndCall({
       agentEndpoint: `/api/agents/${serviceType}`,
-      recipientAddress: address,
-      amount: price,
       payload,
     });
 
