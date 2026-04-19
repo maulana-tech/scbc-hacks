@@ -7,6 +7,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { motion } from "framer-motion";
 import SpendRuleForm from "@/components/SpendRuleForm";
 import PaymentHistory from "@/components/PaymentHistory";
+import EscrowForm from "@/components/EscrowForm";
 import {
   Settings,
   Clock,
@@ -14,6 +15,7 @@ import {
   Pause,
   Play,
   ArrowUpRight,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -130,10 +132,11 @@ function BalanceCard({ stats }: { stats: Stats | null }) {
 const TABS = [
   { key: "overview" as const, label: "Overview", icon: TrendingUp },
   { key: "rules" as const, label: "Rules", icon: Settings },
+  { key: "escrow" as const, label: "Escrow", icon: Shield },
   { key: "history" as const, label: "History", icon: Clock },
 ];
 
-type Tab = "overview" | "rules" | "history";
+type Tab = "overview" | "rules" | "escrow" | "history";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
@@ -360,8 +363,38 @@ function DashboardContent() {
                 </div>
                 <ArrowUpRight className="h-5 w-5 shrink-0 text-text-3" />
               </Link>
+              <button
+                onClick={() => setTab("escrow")}
+                className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 w-full text-left transition-colors hover:bg-surface-hover"
+              >
+                <div className="min-w-0">
+                  <div className="type-subheading text-text">
+                    Create a <span className="font-editorial">smart escrow</span>
+                  </div>
+                  <div className="mt-1 type-body-sm text-text-3">
+                    Hold payment until the agent completes the task.
+                  </div>
+                </div>
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-text-3" />
+              </button>
+              <a
+                href="https://t.me/vaixa_bot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 transition-colors hover:bg-surface-hover"
+              >
+                <div className="min-w-0">
+                  <div className="type-subheading text-text">
+                    Open <span className="font-editorial">Telegram Bot</span>
+                  </div>
+                  <div className="mt-1 type-body-sm text-text-3">
+                    Use all agents directly in Telegram chat.
+                  </div>
+                </div>
+                <ArrowUpRight className="h-5 w-5 shrink-0 text-text-3" />
+              </a>
               <Link
-                href="/"
+                href="/marketplace"
                 className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 transition-colors hover:bg-surface-hover"
               >
                 <div className="min-w-0">
@@ -510,6 +543,15 @@ function DashboardContent() {
           <div className="lg:col-span-2">
             <p className="type-caption text-text-3 mb-4">Create</p>
             <SpendRuleForm onSubmit={handleAddRule} />
+          </div>
+        </div>
+      )}
+
+      {tab === "escrow" && (
+        <div>
+          <p className="type-caption text-text-3 mb-4">Smart Escrow</p>
+          <div className="max-w-lg">
+            <EscrowForm />
           </div>
         </div>
       )}
