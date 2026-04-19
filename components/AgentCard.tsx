@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { Code, FileText, Languages, type LucideIcon, Loader2, Check, AlertCircle } from "lucide-react";
 import { useAgentPayment } from "@/lib/use-agent-payment";
+import { Code, FileText, Languages, Database, Regex, Lightbulb, type LucideIcon, Loader2, Check, AlertCircle } from "lucide-react";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   "code-review": Code,
   summarizer: FileText,
   translator: Languages,
+  "sql-generator": Database,
+  "regex-generator": Regex,
+  "code-explainer": Lightbulb,
 };
 
 interface AgentCardProps {
@@ -49,18 +52,35 @@ export default function AgentCard({
     setStatus("paying");
     setShowModal(true);
 
+    let payload: Record<string, unknown> = {};
+    switch (serviceType) {
+      case "code-review":
+        payload = { code: "function hello() { return 'world'; }", language: "typescript", focus: "general" };
+        break;
+      case "summarizer":
+        payload = { text: "This is a sample text that needs to be summarized into a concise summary.", style: "bullet", maxLength: 100 };
+        break;
+      case "translator":
+        payload = { text: "Hello world", targetLanguage: "es" };
+        break;
+      case "sql-generator":
+        payload = { description: "Get all users created after 2024", dialect: "postgresql" };
+        break;
+      case "regex-generator":
+        payload = { pattern: "Validate email addresses", flags: "gi" };
+        break;
+      case "code-explainer":
+        payload = { code: "const add = (a, b) => a + b;", language: "javascript" };
+        break;
+      default:
+        payload = { input: "test" };
+    }
+
     const { ok, data, error } = await payAndCall({
       agentEndpoint: `/api/agents/${serviceType}`,
       recipientAddress: address,
       amount: price,
-      payload: {
-        text: "Hello world",
-        language: "typescript",
-        focus: "general",
-        style: "paragraph",
-        maxLength: 200,
-        targetLanguage: "id",
-      },
+      payload,
     });
 
     if (ok) {
