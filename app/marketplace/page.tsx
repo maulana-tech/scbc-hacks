@@ -10,6 +10,9 @@ import {
   TrendingUp,
   Shield,
   Wallet,
+  Database,
+  Regex,
+  Lightbulb,
 } from "lucide-react";
 
 const AGENTS = [
@@ -52,9 +55,48 @@ const AGENTS = [
     category: "Productivity",
     features: ["50+ Languages", "Context-aware", "Fast"],
   },
+  {
+    id: "sql-generator",
+    name: "SQL Generator",
+    serviceType: "sql-generator",
+    icon: Database,
+    price: "0.04",
+    reputationScore: 612,
+    totalTxCount: 1823,
+    address: "0x0000…0004",
+    description: "Generate optimized SQL queries from natural language descriptions.",
+    category: "Development",
+    features: ["PostgreSQL", "MySQL", "SQLite"],
+  },
+  {
+    id: "regex-generator",
+    name: "Regex Generator",
+    serviceType: "regex-generator",
+    icon: Regex,
+    price: "0.03",
+    reputationScore: 489,
+    totalTxCount: 956,
+    address: "0x0000…0005",
+    description: "Create complex regex patterns with explanations and test cases.",
+    category: "Utilities",
+    features: ["Pattern Generation", "Testing", "Explanations"],
+  },
+  {
+    id: "code-explainer",
+    name: "Code Explainer",
+    serviceType: "code-explainer",
+    icon: Lightbulb,
+    price: "0.02",
+    reputationScore: 534,
+    totalTxCount: 1247,
+    address: "0x0000…0006",
+    description: "Explain any code snippet in plain English with line-by-line breakdown.",
+    category: "Development",
+    features: ["Line-by-line", "Concepts", "Examples"],
+  },
 ];
 
-const CATEGORIES = ["All", "Development", "Productivity", "AI", "Utilities"];
+const CATEGORIES = ["All", "Development", "Productivity", "Utilities"];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
