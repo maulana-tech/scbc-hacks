@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
+import AgentCard from "@/components/AgentCard";
 import {
   ArrowRight,
   Code,
@@ -13,9 +15,10 @@ import {
   BarChart3,
   ChevronRight,
   ExternalLink,
+  Database,
+  Regex,
+  Lightbulb,
 } from "lucide-react";
-import Link from "next/link";
-import AgentCard from "@/components/AgentCard";
 
 const FEATURED_AGENTS = [
   {
@@ -25,8 +28,7 @@ const FEATURED_AGENTS = [
     reputationScore: 847,
     totalTxCount: 2341,
     address: "0x0000…0001",
-    description:
-      "Security, performance, and style analysis for any codebase.",
+    description: "Security, performance, and style analysis for any codebase.",
   },
   {
     name: "Summarizer",
@@ -35,8 +37,7 @@ const FEATURED_AGENTS = [
     reputationScore: 923,
     totalTxCount: 8472,
     address: "0x0000…0002",
-    description:
-      "Distill long texts into concise bullets, paragraphs, or TL;DR.",
+    description: "Distill long texts into concise bullets, paragraphs, or TL;DR.",
   },
   {
     name: "Translator",
@@ -46,6 +47,33 @@ const FEATURED_AGENTS = [
     totalTxCount: 5109,
     address: "0x0000…0003",
     description: "Context-aware translation across 50+ languages.",
+  },
+  {
+    name: "SQL Generator",
+    serviceType: "sql-generator",
+    price: "0.04",
+    reputationScore: 612,
+    totalTxCount: 1823,
+    address: "0x0000…0004",
+    description: "Generate optimized SQL queries from natural language.",
+  },
+  {
+    name: "Regex Generator",
+    serviceType: "regex-generator",
+    price: "0.03",
+    reputationScore: 489,
+    totalTxCount: 956,
+    address: "0x0000…0005",
+    description: "Create regex patterns with explanations and test cases.",
+  },
+  {
+    name: "Code Explainer",
+    serviceType: "code-explainer",
+    price: "0.02",
+    reputationScore: 534,
+    totalTxCount: 1247,
+    address: "0x0000…0006",
+    description: "Explain any code snippet in plain English.",
   },
 ];
 
@@ -83,6 +111,27 @@ const ENDPOINTS = [
     price: "0.03 USDC",
     desc: "Translation",
     icon: Languages,
+  },
+  {
+    method: "POST",
+    path: "/api/agents/sql-generator",
+    price: "0.04 USDC",
+    desc: "SQL generation",
+    icon: Database,
+  },
+  {
+    method: "POST",
+    path: "/api/agents/regex-generator",
+    price: "0.03 USDC",
+    desc: "Regex patterns",
+    icon: Regex,
+  },
+  {
+    method: "POST",
+    path: "/api/agents/code-explainer",
+    price: "0.02 USDC",
+    desc: "Code explanation",
+    icon: Lightbulb,
   },
   {
     method: "POST",
@@ -215,7 +264,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-6 mt-10">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              <span className="type-caption text-text-3">3 agents live</span>
+              <span className="type-caption text-text-3">6 agents live</span>
             </div>
             <span className="type-caption text-text-3">
               Fuji Testnet · 43113
@@ -657,6 +706,21 @@ export default function LandingPage() {
                     label: "Translator",
                     bg: "bg-accent-subtle",
                   },
+                  {
+                    icon: Database,
+                    label: "SQL Gen",
+                    bg: "bg-accent-subtle",
+                  },
+                  {
+                    icon: Regex,
+                    label: "Regex Gen",
+                    bg: "bg-accent-subtle",
+                  },
+                  {
+                    icon: Lightbulb,
+                    label: "Code Explain",
+                    bg: "bg-accent-subtle",
+                  },
                 ],
               },
               {
@@ -805,7 +869,7 @@ export default function LandingPage() {
                   <span className="text-bg font-bold text-[10px]">A</span>
                 </div>
                 <span className="text-[18px] font-semibold tracking-tight text-text">
-                  Avax-agents
+                  Vaxa
                 </span>
               </div>
               <p className="text-[13px] text-text-3 leading-[1.6]">
@@ -823,7 +887,9 @@ export default function LandingPage() {
                     "Code Review",
                     "Summarizer",
                     "Translator",
-                    "Tip Agent",
+                    "SQL Generator",
+                    "Regex Generator",
+                    "Code Explainer",
                   ].map((l) => (
                     <li key={l}>
                       <span className="text-[14px] text-text-3 hover:text-text cursor-pointer transition-colors">
