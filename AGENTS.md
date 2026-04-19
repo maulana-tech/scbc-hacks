@@ -19,6 +19,7 @@
 9. [Folder Structure](#9-folder-structure)
 10. [Environment Variables](#10-environment-variables)
 11. [Cara Menjalankan Lokal](#11-cara-menjalankan-lokal)
+12. [Telegram Bot Integration](#12-telegram-bot-integration)
 
 ---
 
@@ -716,6 +717,260 @@ npm run dev
 npm run payagent:scheduler
 ```
 
+---
+
+## 12. Telegram Bot Integration
+
+### 12.1 Arsitektur Telegram Bot
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Telegram Bot (Vaxa)                         │
+│                                                                 │
+│  ┌─────────────┐    ┌──────────────┐    ┌──────────────────┐  │
+│  │   User      │───▶│  Bot Server  │───▶│   AI Agents      │  │
+│  │  (Telegram) │    │  (Webhook)   │    │  (x402 paywall)  │  │
+│  └─────────────┘    └──────────────┘    └──────────────────┘  │
+│                              │                    │             │
+│                              ▼                    ▼             │
+│                     ┌──────────────┐    ┌──────────────────┐  │
+│                     │  GitHub API  │    │  Avalanche C-Chain│  │
+│                     │  (Tools)     │    │  (x402 payment)   │  │
+│                     └──────────────┘    └──────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 12.2 Fitur Telegram Bot
+
+| Fitur | Deskripsi |
+|-------|-----------|
+| **AI Agents** | Akses semua AI agents via chat (Code Review, Summarizer, dll) |
+| **GitHub Integration** | buat issue, review PR, cek repo status |
+| **Tool Integrations** | Linear, Notion, Jira, Slack |
+| **Payment** | x402 payment via USDC (Fuji testnet) |
+| **Wallet Management** | Connect wallet via Telegram |
+
+### 12.3 Command List
+
+```
+/start - Register dan connect wallet
+/agents - List semua AI agents
+/code <code> - Code review
+/summarize <text> - Summarize text
+/translate <text> - Translate ke bahasa lain
+/github <command> - GitHub operations
+/tools - List integrated tools
+/settings - Bot settings
+/help - Help
+```
+
+### 12.4 GitHub Integration
+
+```typescript
+// lib/github.ts
+interface GitHubOps {
+  createIssue: (repo: string, title: string, body: string) => Promise<Issue>;
+  listIssues: (repo: string, state: "open" | "closed") => Promise<Issue[]>;
+  getPR: (repo: string, prNumber: number) => Promise<PullRequest>;
+  reviewPR: (repo: string, prNumber: number, body: string) => Promise<Review>;
+  getRepoInfo: (repo: string) => Promise<Repo>;
+  listCommits: (repo: string, limit: number) => Promise<Commit[]>;
+}
+```
+
+**Supported GitHub Operations:**
+- Create/Read/Update Issues
+- Pull Request: Create, Review, List, Status
+- Repository: Info, Branches, Commits
+- Code Search
+
+### 12.5 External Tools Integration
+
+```typescript
+// lib/tools.ts
+interface ToolIntegrations {
+  // Linear
+  linear: {
+    createIssue: (projectId: string, title: string, description: string) => Promise<LinearIssue>;
+    listIssues: (projectId: string) => Promise<LinearIssue[]>;
+    updateIssue: (issueId: string, status: string) => Promise<void>;
+  };
+  
+  // Notion
+  notion: {
+    createPage: (parentId: string, title: string, content: string) => Promise<Page>;
+    queryDatabase: (databaseId: string, filter: Filter) => Promise<Page[]>;
+  };
+  
+  // Jira
+  jira: {
+    createIssue: (project: string, summary: string, description: string) => Promise<JiraIssue>;
+    transitionIssue: (issueId: string, transitionId: string) => Promise<void>;
+  };
+}
+```
+
+### 12.6 Payment Flow di Telegram
+
+```
+User (Telegram)                    Bot Server                 Avalanche
+     │                                │                           │
+     │  /code review                  │                           │
+     │──────────────────────────────▶│                           │
+     │                                │  402 Payment Required     │
+     │◀──────────────────────────────│  (amount, recipient)      │
+     │                                │                           │
+     │  [User approve payment]       │                           │
+     │  (inline button: Pay 0.05 USDC)                           │
+     │──────────────────────────────▶│                           │
+     │                                │  Submit USDC tx          │
+     │                                │─────────────────────────▶│
+     │                                │  (confirm)               │
+     │                                │◀─────────────────────────│
+     │                                │                           │
+     │                                │  Call AI Agent           │
+     │                                │─────────────────────────▶│
+     │                                │                           │
+     │  Result + Reputation           │                           │
+     │◀──────────────────────────────│                           │
+```
+
+### 12.7 Bot Architecture (Next.js API Routes)
+
+```
+app/api/telegram/
+├── route.ts              ← Webhook handler utama
+├── bot/
+│   ├── index.ts          ← Bot initialization
+│   ├── commands.ts       ← Command handlers
+│   ├── handlers.ts       ← Message handlers
+│   └── keyboard.ts       ← Inline keyboards
+├── services/
+│   ├── github.ts         ← GitHub API
+│   ├── linear.ts         ← Linear API
+│   ├── notion.ts         ← Notion API
+│   └── jira.ts           ← Jira API
+└── middleware/
+    ├── auth.ts           ← Verify telegram init data
+    └── payment.ts        ← x402 payment handling
+```
+
+### 12.8 Environment Variables untuk Telegram Bot
+
+```bash
+# Telegram Bot
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+TELEGRAM_WEBHOOK_SECRET=your_webhook_secret
+TELEGRAM_ADMIN_IDS=123456789,987654321
+
+# GitHub
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+GITHUB_ORG=your-org-name
+
+# Tools
+LINEAR_API_KEY=lin_api_xxxxx
+NOTION_API_KEY=secret_xxxxx
+JIRA_API_TOKEN=xxxxx
+JIRA_DOMAIN=your-domain.atlassian.net
+
+# Payment (sama seperti sebelumnya)
+PAY_AGENT_PRIVATE_KEY=0x...
+USDC_CONTRACT_ADDRESS=0x...
+```
+
+### 12.9 Contoh Penggunaan
+
+**Code Review via Telegram:**
+```
+User: /code function test() { return 42; }
+
+Bot: 🔍 Code Review - 0.05 USDC
+     
+[Pay 0.05 USDC]
+
+User: (klik Pay)
+
+Bot: ✅ Payment confirmed!
+     
+📋 Issues Found:
+   [Medium] Missing JSDoc comment
+   [Low] Consider adding return type
+   
+   Score: 85/100
+```
+
+**GitHub Issue Creation:**
+```
+User: /github issue create my-repo "Fix login bug" "User cannot login with SSO"
+
+Bot: ✅ Issue created!
+     https://github.com/org/my-repo/issues/42
+```
+
+**Tool Integration (Linear):**
+```
+User: /linear create "Implement dark mode" "Add dark mode to dashboard"
+
+Bot: ✅ Linear Issue created!
+     VAXA-123 - Implement dark mode
+     Status: Backlog
+```
+
+---
+
+## 13. Folder Structure Lengkap
+
+```
+vaxa/
+├── AGENTS.md                          ← file ini
+├── README.md
+├── .env.local
+│
+├── contracts/
+│   ├── AgentRegistry.sol
+│   └── abis/
+│
+├── lib/
+│   ├── x402-middleware.ts
+│   ├── contracts.ts
+│   ├── ai.ts
+│   ├── github.ts              ← GitHub integration
+│   ├── linear.ts              ← Linear integration
+│   ├── notion.ts              ← Notion integration
+│   └── jira.ts                ← Jira integration
+│
+├── agents/
+│   ├── code-review/
+│   ├── summarizer/
+│   ├── translator/
+│   ├── sql-generator/
+│   ├── regex-generator/
+│   ├── code-explainer/
+│   └── pay-agent/
+│
+├── app/                               ← Next.js 14 app router
+│   ├── page.tsx
+│   ├── marketplace/
+│   ├── dashboard/
+│   └── api/
+│       ├── agents/
+│       ├── payagent/
+│       └── telegram/                 ← Telegram bot routes
+│           ├── route.ts
+│           └── bot/
+│
+├── components/
+│   ├── AgentCard.tsx
+│   ├── AgentDetailModal.tsx
+│   └── ...
+│
+└── scripts/
+    ├── deploy-contracts.ts
+    └── seed-testnet.ts
+```
+
+---
+
 **Faucet untuk testnet:**
 - AVAX: https://faucet.avax.network
 - USDC (Fuji): https://faucet.circle.com (pilih Avalanche Fuji)
@@ -723,4 +978,129 @@ npm run payagent:scheduler
 ---
 
 *Dibuat untuk SCBC Hackathon — Avalanche Track*
-*AgentMarket: Programmable money meets autonomous AI agents*
+*Vaxa: Programmable money meets autonomous AI agents + Telegram Bot*
+
+---
+
+## 14. Railway Deployment
+
+### 14.1 Setup Bot di Railway
+
+```bash
+# 1. Buat project baru di Railway
+railway init
+railway project name vaxa-bot
+
+# 2. Deploy
+railway up
+```
+
+### 14.2 Environment Variables (Railway)
+
+```bash
+# Wajib
+TELEGRAM_BOT_TOKEN=xxx
+VAXA_API_URL=https://scbc-hacks.vercel.app
+
+# GitHub (for /github commands)
+GITHUB_TOKEN=ghp_xxx
+```
+
+### 14.3 Bot Commands
+
+| Command | Description |
+|---------|-------------|
+| `/start` | Connect wallet & register |
+| `/agents` | List AI agents |
+| `/code <code>` | Code review (0.05 USDC) |
+| `/summarize <text>` | Summarize (0.02 USDC) |
+| `/translate <text>` | Translate (0.03 USDC) |
+| `/sql <desc>` | SQL generator (0.04 USDC) |
+| `/regex <pattern>` | Regex generator (0.03 USDC) |
+| `/explain <code>` | Code explainer (0.02 USDC) |
+| `/github` | GitHub operations |
+| `/help` | Help |
+
+### 14.4 GitHub Commands
+
+| Command | Description |
+|---------|-------------|
+| `/github issue create <repo> <title> <body>` | Create issue |
+| `/github issue list <repo>` | List open issues |
+| `/github issue view <repo> <num>` | View issue |
+| `/github pr list <repo>` | List open PRs |
+| `/github pr view <repo> <num>` | View PR |
+| `/github repo <owner/repo>` | Repo info |
+| `/github commits <repo>` | Recent commits |
+| `/github branches <repo>` | List branches |
+| `/github search <query>` | Search code |
+
+### 14.5 Contoh Penggunaan
+
+```
+User: /code function fib(n) { return n <= 1 ? n : fib(n-1) + fib(n-2); }
+
+Bot: ⏳ Calling Code Review...
+
+Bot: 📋 Issues Found:
+[Medium] Recursive without memoization - O(2^n) complexity
+[Low] Missing input validation
+
+Score: 72/100
+
+---
+
+User: /github issue create facebook/react "Fix memory leak" "UseEffect cleanup not called"
+
+Bot: ✅ Issue created!
+https://github.com/facebook/react/issues/12345
+
+---
+
+User: /github repo facebook/react
+
+Bot: 📦 facebook/react
+A declarative, efficient, and flexible JavaScript library for building user interfaces.
+
+⭐ 215000 stars
+🍴 45000 forks
+🗋 Default: main
+
+---
+
+User: /github issue create myusername/my-repo "Fix bug" "Login not working"
+
+Bot: ✅ Issue created!
+https://github.com/myusername/my-repo/issues/42
+
+---
+
+User: /github commits facebook/react main
+
+Bot: 📜 Recent Commits:
+• abc1234 Fix useEffect cleanup (octocat)
+• def5678 Add new feature (johndoe)
+• ghi9012 Update docs (janedoe)
+```
+
+### 14.5 Troubleshooting
+
+```bash
+# Check logs
+railway logs
+
+# Restart bot
+railway restart
+
+# Rebuild
+railway up --rebuild
+```
+
+**Faucet untuk testnet:**
+- AVAX: https://faucet.avax.network
+- USDC (Fuji): https://faucet.circle.com (pilih Avalanche Fuji)
+
+---
+
+*Dibuat untuk SCBC Hackathon — Avalanche Track*
+*Vaxa: Programmable money meets autonomous AI agents + Telegram Bot*
