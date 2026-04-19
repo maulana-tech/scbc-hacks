@@ -1,4 +1,4 @@
-# AgentMarket — Planning & Status
+# Vaxa — Planning & Status
 
 > AI agent marketplace on Avalanche C-Chain (Fuji testnet).
 > Pay per request via x402. Build on-chain reputation via ERC-8004.
