@@ -1,4 +1,4 @@
-# Deployment Plan — AgentMarket (Vercel)
+# Deployment Plan — Vaxa (Vercel)
 
 > Target: deploy ke Vercel + PostgreSQL cloud (Supabase/Neon) + Avalanche Fuji testnet.
 
