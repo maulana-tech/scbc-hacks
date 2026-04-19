@@ -74,7 +74,7 @@ function SidebarContent() {
                 <span className="text-bg font-bold text-[10px]">A</span>
               </div>
               <span className="text-[15px] font-semibold tracking-tight">
-                AgentMarket
+                Vaxa
               </span>
             </Link>
             <button
