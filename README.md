@@ -1,13 +1,36 @@
 # Vaxa
 
-> AI agent marketplace on Avalanche C-Chain (Fuji testnet).
+> AI agent marketplace on Avalanche C-Chain.
 > Pay per request via x402. Build on-chain reputation via ERC-8004.
 
 <p align="center">
-  <a href="https://scbc-hacks.vercel.app">
+  <a href="https://vaxa.vercel.app">
     <img src="https://vercel.com/button" alt="Deploy to Vercel" />
   </a>
 </p>
+
+---
+
+## 🏆 Hackathon: Avalanche — Agentic Payments ($7,500)
+
+x402 activates the HTTP 402 status code to make payments native to the internet — any API call can require and settle a stablecoin payment in ~2 seconds, with no accounts, no API keys, and no gas fees for the payer.
+
+### What We Built
+
+- ✅ **x402 Pay-per-Request** — HTTP-native payments, no subscriptions
+- ✅ **ERC-8004 Reputation** — On-chain identity & trust verification
+- ✅ **3+ Service Agents** — Code Review, Summarizer, Translator
+- ✅ **PayAgent** — Programmable spending with configurable rules
+- ✅ **Avalanche C-Chain** — Fuji testnet deployment
+- ✅ **Wallet Connection** — RainbowKit integration
+- ✅ **Smooth Scroll** — Lenis-powered landing page
+
+### Enhancement Goals
+
+- 🔄 Add more agents (SQL Generator, Regex, Code Explainer)
+- 🎯 Smart Escrow Agent (payment held until conditions met)
+- 🧭 Routing Agent (compare & select best service)
+- 🔗 Agent-to-Agent composition (A2A)
 
 ---
 
@@ -18,7 +41,6 @@
 - **ERC-8004 Reputation** — On-chain reputation builds with every transaction
 - **PayAgent** — Programmable spending with configurable rules & limits
 - **Avalanche Fuji** — Testnet deployment, real USDC transfers
-- **Smooth Scroll** — Lenis-powered smooth scrolling on landing
 
 ---
 
@@ -36,15 +58,13 @@ npm install
 
 ```bash
 cp .env.example .env.local
-# Fill in required values (see below)
+# Fill in required values
 ```
 
 ### 3. Database
 
 ```bash
-# Local PostgreSQL required
-# Create database: createdb agentmarket
-
+# PostgreSQL required
 npx prisma db push
 ```
 
@@ -58,106 +78,34 @@ Open http://localhost:3000
 
 ---
 
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `AVALANCHE_RPC_URL` | Fuji RPC: `https://api.avax-test.network/ext/bc/C/rpc` |
-| `AVALANCHE_CHAIN_ID` | Testnet chain: `43113` |
-| `AGENT_REGISTRY_CONTRACT` | Deployed contract address |
-| `PAY_AGENT_PRIVATE_KEY` | Hot wallet for PayAgent |
-| `DEPLOYER_PRIVATE_KEY` | Wallet for contract deployment |
-| `USDC_CONTRACT_ADDRESS` | Fuji USDC: `0x5425890C6C9Fc8561a8b4E763b7E6e43b7e9A5F4` |
-| `AI_PROVIDER` | `openrouter` or `glm` |
-| `OPENROUTER_API_KEY` | From openrouter.ai/keys |
-| `GLM_API_KEY` | From open.bigmodel.cn |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `WALLETCONNECT_PROJECT_ID` | From cloud.walletconnect.com |
-| `NEXTAUTH_SECRET` | Random 32-char secret |
-| `NEXT_PUBLIC_APP_URL` | Your app URL |
-
----
-
-## Scripts
-
-| Command | Description |
-|--------|-------------|
-| `npm run dev` | Start dev server |
-| `npm run build` | Production build (includes Prisma generate) |
-| `npm run deploy:contract` | Compile & deploy smart contract |
-| `npm run seed` | Register agents on-chain |
-| `npm run lint` | Lint check |
-
----
-
-## Project Structure
-
-```
-agentmarket/
-├── app/                    # Next.js App Router
-│   ├── page.tsx            # Landing page
-│   ├── marketplace/        # Agent listing
-│   ├── dashboard/          # PayAgent dashboard
-│   └── api/               # API routes
-├── agents/                 # AI agent implementations
-├── components/             # React components
-├── lib/                    # Core utilities (x402, contracts, AI)
-├── contracts/              # Solidity smart contract
-├── prisma/                 # Database schema
-└── scripts/                # Deployment scripts
-```
-
----
-
 ## Pages
 
 | Path | Description |
 |------|-------------|
 | `/` | Landing page with smooth scroll |
-| `/marketplace` | Agent marketplace with search/filters |
+| `/marketplace` | Agent marketplace |
 | `/dashboard` | PayAgent dashboard (wallet required) |
-
----
-
-## API Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/api/agents/code-review` | Code analysis (0.05 USDC) |
-| POST | `/api/agents/summarize` | Text summarization (0.02 USDC) |
-| POST | `/api/agents/translate` | Translation (0.03 USDC) |
-| POST | `/api/agents/tip` | Send tip (≥0.01 USDC) |
-| GET/POST | `/api/payagent/config` | Get/set PayAgent config |
-| GET/POST/PATCH | `/api/payagent/rules` | Manage spend rules |
-| GET | `/api/payagent/history` | Transaction history |
-| GET | `/api/payagent/stats` | Spending statistics |
-| POST | `/api/payagent/pause` | Pause PayAgent |
-| POST | `/api/payagent/resume` | Resume PayAgent |
 
 ---
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Framework:** Next.js 16 (App Router)
 - **Styling:** Tailwind CSS v4
 - **Web3:** ethers.js v6, viem, wagmi, RainbowKit
-- **Database:** PostgreSQL via Prisma v5
-- **AI:** OpenAI SDK (OpenRouter / GLM fallback)
+- **AI:** OpenAI SDK (OpenRouter / GLM)
 - **Blockchain:** Avalanche C-Chain Fuji (Chain 43113)
 - **Smart Contract:** Solidity ^0.8.20, ERC-8004
-- **Animation:** Framer Motion, Lenis (smooth scroll)
+- **Database:** PostgreSQL via Prisma v5
+- **Animation:** Framer Motion, Lenis
 
 ---
 
-## Deploy to Vercel
+## Live Demo
 
-```bash
-npm i -g vercel
-vercel login
-vercel --prod
-```
-
-Or connect your GitHub repo to Vercel for automatic deploys.
+- **App:** https://vaxa.vercel.app
+- **Dashboard:** https://vaxa.vercel.app/dashboard
+- **Marketplace:** https://vaxa.vercel.app/marketplace
 
 ---
 
