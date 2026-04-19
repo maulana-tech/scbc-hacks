@@ -18,6 +18,8 @@ import {
   Database,
   Regex,
   Lightbulb,
+  Store,
+  MessageCircle,
 } from "lucide-react";
 
 const FEATURED_AGENTS = [
@@ -165,55 +167,89 @@ export default function LandingPage() {
     <div>
       {/* ── HERO ── */}
       <section className="relative overflow-hidden min-h-[calc(100vh-3.5rem)] flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-bg via-bg to-[#b7d94108]" />
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.025]"
           style={{
             backgroundImage:
               "radial-gradient(circle, #b7d941 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
+            backgroundSize: "28px 28px",
           }}
         />
-        <div className="relative max-w-[1200px] mx-auto px-6 py-20 flex items-center">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-accent/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/3 blur-[100px] rounded-full" />
+
+        <div className="relative max-w-[1200px] mx-auto px-6 py-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-center">
             <motion.div
               initial="hidden"
               animate="visible"
               variants={fadeUp}
               custom={0}
             >
-              <div className="inline-flex items-center gap-2 bg-surface border border-border rounded-none px-3 py-1.5 mb-6">
-                <span className="bg-accent text-bg text-[10px] font-bold px-1.5 py-0.5 rounded-sm tracking-wider">
+              <div className="inline-flex items-center gap-2.5 bg-surface border border-border px-3.5 py-1.5 mb-8">
+                <div className="w-1.5 h-1.5 bg-accent animate-pulse" />
+                <span className="text-[11px] font-semibold tracking-[0.5px] uppercase text-text-2">
+                  Live on Avalanche Fuji
+                </span>
+                <span className="text-border">·</span>
+                <span className="bg-accent text-bg text-[9px] font-bold px-1.5 py-0.5 tracking-wider">
                   ERC-8004
                 </span>
-                <span className="text-[12px] font-medium text-text-2">
-                  On-Chain Reputation Standard
-                </span>
               </div>
-              <h1 className="text-[clamp(36px,5vw,52px)] font-bold leading-[1.1] tracking-[-1.5px] text-text mb-5">
-                AI agents you
+
+              <h1 className="text-[clamp(40px,5.5vw,64px)] font-bold leading-[1.05] tracking-[-2px] text-text mb-6">
+                Autonomous agents,
                 <br />
-                can{" "}
-                <span className="font-editorial text-accent">trust</span>{" "}
-                on-chain.
+                <span className="text-text-3">programmable</span>{" "}
+                <span className="text-accent">money.</span>
               </h1>
-              <p className="text-[16px] text-text-2 leading-[1.6] max-w-[440px] mb-8">
-                Every request is a micro-payment in USDC. Every successful
-                transaction builds verifiable reputation via ERC-8004. No
-                subscriptions. No surprises.
+
+              <p className="text-[17px] text-text-2 leading-[1.7] max-w-[480px] mb-10">
+                Six AI agents. Pay per request in USDC via x402.
+                Every transaction builds verifiable on-chain reputation.
+                No subscriptions. No gatekeepers.
               </p>
-              <div className="flex items-center gap-3">
+
+              <div className="flex items-center gap-3 mb-10">
                 <Link
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 h-10 px-5 rounded-none bg-accent text-bg text-[14px] font-medium hover:bg-accent-hover transition-colors"
+                  href="/marketplace"
+                  className="inline-flex items-center gap-2.5 h-11 px-6 bg-accent text-bg text-[14px] font-semibold hover:bg-accent-hover transition-colors"
                 >
-                  Get started <ArrowRight size={14} />
+                  Explore agents <ArrowRight size={15} />
                 </Link>
                 <Link
                   href="#endpoints"
-                  className="inline-flex items-center h-10 px-5 rounded-none border border-border bg-surface text-text text-[14px] font-medium hover:border-border-strong transition-colors"
+                  className="inline-flex items-center gap-2 h-11 px-5 border border-border bg-surface/80 text-text text-[14px] font-medium hover:border-border-strong transition-colors backdrop-blur-sm"
                 >
                   View API
                 </Link>
+                <a
+                  href="https://t.me/vaixa_bot"
+                  target="_blank"
+                  className="inline-flex items-center gap-2 h-11 px-4 border border-border bg-surface/80 text-text-2 text-[13px] font-medium hover:text-accent hover:border-accent/30 transition-colors backdrop-blur-sm"
+                >
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                  </svg>
+                  Bot
+                </a>
+              </div>
+
+              <div className="grid grid-cols-4 gap-6 border-t border-border pt-6">
+                {[
+                  { val: "6", label: "AI Agents" },
+                  { val: "x402", label: "Payments" },
+                  { val: "ERC-8004", label: "Reputation" },
+                  { val: "<$0.01", label: "Per request" },
+                ].map((s) => (
+                  <div key={s.label}>
+                    <div className="text-[20px] font-bold text-text tracking-[-0.5px] mb-0.5">
+                      {s.val}
+                    </div>
+                    <div className="text-[12px] text-text-3">{s.label}</div>
+                  </div>
+                ))}
               </div>
             </motion.div>
 
@@ -222,59 +258,54 @@ export default function LandingPage() {
               animate="visible"
               variants={fadeUp}
               custom={2}
+              className="hidden lg:block"
             >
-              <div className="bg-surface border border-border rounded-none p-5 max-w-[320px] ml-auto shadow-lg shadow-black/10">
-                <div className="flex justify-between items-center mb-3">
-                  <span className="text-[12px] text-text-3">
-                    PayAgent Wallet
-                  </span>
-                  <span className="text-[12px] text-text-3 font-mono">
-                    ••• f42a
-                  </span>
-                </div>
-                <div className="mb-3">
-                  <span className="text-[12px] text-text-3">Balance</span>
-                  <div className="text-[22px] font-bold text-text font-mono mt-0.5">
-                    142.50{" "}
-                    <span className="text-[13px] font-normal text-text-3">
-                      USDC
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center py-2 border-t border-border">
-                  <span className="text-[12px] text-text-3">Incoming</span>
-                  <span className="text-[13px] font-semibold text-accent font-mono">
-                    +12.07
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border">
-                  {["Summarizer", "Code Review", "Translator"].map((t) => (
-                    <span
-                      key={t}
-                      className="text-[10px] bg-bg border border-border rounded-full px-2.5 py-0.5 text-text-3"
+              <div className="space-y-3">
+                {[
+                  { agent: "Code Review", price: "0.05", score: 847, tx: "2,341", icon: Code, status: "completed" },
+                  { agent: "Summarizer", price: "0.02", score: 923, tx: "8,472", icon: FileText, status: "completed" },
+                  { agent: "Translator", price: "0.03", score: 756, tx: "5,109", icon: Languages, status: "completed" },
+                  { agent: "SQL Generator", price: "0.04", score: 612, tx: "1,823", icon: Database, status: "completed" },
+                  { agent: "Regex Generator", price: "0.03", score: 489, tx: "956", icon: Regex, status: "completed" },
+                  { agent: "Code Explainer", price: "0.02", score: 534, tx: "1,247", icon: Lightbulb, status: "completed" },
+                ].map((a, i) => {
+                  const Icon = a.icon;
+                  return (
+                    <motion.div
+                      key={a.agent}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="group bg-surface/80 backdrop-blur-sm border border-border hover:border-border-strong p-3.5 transition-all hover:bg-surface"
                     >
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-accent-subtle flex items-center justify-center">
+                            <Icon size={14} className="text-accent" strokeWidth={1.5} />
+                          </div>
+                          <div>
+                            <div className="text-[13px] font-semibold text-text">{a.agent}</div>
+                            <div className="text-[11px] text-text-3 font-mono">{a.tx} tx</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <div className="text-[12px] font-mono font-semibold text-text">{a.price} USDC</div>
+                            <div className="flex items-center gap-1">
+                              <div className="w-8 h-1 bg-border overflow-hidden">
+                                <div className="h-full bg-accent" style={{ width: `${a.score / 10}%` }} />
+                              </div>
+                              <span className="text-[10px] text-text-3 font-mono">{a.score}</span>
+                            </div>
+                          </div>
+                          <ArrowRight size={12} className="text-text-3 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </motion.div>
-          </div>
-
-          <div className="flex items-center gap-4 mt-10">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="type-caption text-text-2">6 AI Agents</span>
-            </div>
-            <span className="text-border">|</span>
-            <a href="https://t.me/vaixa_bot" target="_blank" className="flex items-center gap-2 text-text-2 hover:text-accent transition-colors">
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 8.29a1 1 0 01-.828.828l-8.29-1.97a1 1 0 01-.234-.656l.234-2.3 6.1-3.9-1.2-3.9-3.9 1.2 3.9-6.1L3.9 4.7a1.002 1.002 0 01.528-1.656l2.3-.234 1.97 8.29a1.002 1.002 0 01-.828.828z"/>
-              </svg>
-              Telegram Bot
-            </a>
-            <span className="text-border">|</span>
-            <span className="type-caption text-text-3 font-mono">Avalanche Fuji · 43113</span>
           </div>
         </div>
       </section>
@@ -818,52 +849,82 @@ export default function LandingPage() {
 
 {/* ── CTA ── */}
       <section className="bg-surface-muted border-t border-border">
-        <div className="max-w-[1200px] mx-auto px-6 py-24 text-center">
-          <h2 className="text-[clamp(32px,5vw,48px)] font-bold tracking-[-1.5px] text-text mb-3">
-            Start building today
-          </h2>
-          <p className="text-[16px] text-text-2 mb-12 max-w-[500px] mx-auto">
-            Programmable money meets autonomous AI agents. Build, deploy, and earn with x402 payments.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-[800px] mx-auto">
+        <div className="max-w-[1200px] mx-auto px-6 py-24">
+          <div className="text-center mb-14">
+            <h2 className="text-[clamp(32px,5vw,48px)] font-bold tracking-[-1.5px] text-text mb-4">
+              Start building today
+            </h2>
+            <p className="text-[16px] text-text-2 max-w-[480px] mx-auto leading-relaxed">
+              Programmable money meets autonomous AI agents. Pay per request, earn trust on-chain.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[900px] mx-auto">
             {[
               {
-                icon: "📦",
+                icon: Store,
                 title: "Marketplace",
-                desc: "Browse & use AI agents",
+                desc: "Browse 6 AI agents. Pay per request with x402.",
                 href: "/marketplace",
-                color: "bg-accent-subtle border-accent text-accent",
+                accent: "accent",
               },
               {
-                icon: "🤖",
+                icon: MessageCircle,
                 title: "Telegram Bot",
-                desc: "Use agents on chat",
+                desc: "Use agents directly in chat. Bot pays for you.",
                 href: "https://t.me/vaixa_bot",
-                color: "bg-blue-500/10 border-blue-400 text-blue-400",
+                accent: "blue",
               },
               {
-                icon: "⚡",
+                icon: Shield,
                 title: "Smart Escrow",
-                desc: "Hold payment until done",
+                desc: "Hold payment until task is complete. Approve or reject.",
                 href: "/dashboard",
-                color: "bg-amber/10 border-amber text-amber",
+                accent: "amber",
               },
-            ].map((card) => (
-              <Link
-                key={card.title}
-                href={card.href}
-                target={card.href.startsWith("http") ? "_blank" : undefined}
-                className="bg-surface border border-border p-8 text-left hover:border-border-strong hover:translate-y-[-2px] transition-all"
-              >
-                <div className={`w-12 h-12 border-2 rounded-none flex items-center justify-center text-[20px] mb-5 ${card.color}`}>
-                  {card.icon}
-                </div>
-                <h4 className="text-[16px] font-semibold text-text mb-1">
-                  {card.title}
-                </h4>
-                <p className="text-[13px] text-text-3">{card.desc}</p>
-              </Link>
-            ))}
+            ].map((card, i) => {
+              const Icon = card.icon;
+              const accentBg = card.accent === "accent" ? "bg-accent-subtle" : card.accent === "blue" ? "bg-blue-500/10" : "bg-amber/10";
+              const accentText = card.accent === "accent" ? "text-accent" : card.accent === "blue" ? "text-blue-400" : "text-amber";
+              const accentBorder = card.accent === "accent" ? "group-hover:border-accent/30" : card.accent === "blue" ? "group-hover:border-blue-400/30" : "group-hover:border-amber/30";
+
+              return (
+                <motion.div
+                  key={card.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.4 }}
+                >
+                  <Link
+                    href={card.href}
+                    target={card.href.startsWith("http") ? "_blank" : undefined}
+                    className={`group block bg-surface border border-border p-7 hover:border-border-strong hover:translate-y-[-2px] transition-all h-full`}
+                  >
+                    <div className={`w-11 h-11 ${accentBg} flex items-center justify-center mb-5 ${accentBorder} border border-transparent transition-colors`}>
+                      <Icon size={20} className={accentText} strokeWidth={1.5} />
+                    </div>
+                    <h4 className="text-[17px] font-semibold text-text mb-2">
+                      {card.title}
+                    </h4>
+                    <p className="text-[13px] text-text-3 leading-relaxed">{card.desc}</p>
+                    <div className="mt-4 flex items-center gap-1 text-[12px] font-medium text-text-3 group-hover:text-text transition-colors">
+                      <span>Explore</span>
+                      <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center justify-center gap-6 mt-12">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <span className="text-[13px] text-text-2">Live on Avalanche Fuji</span>
+            </div>
+            <span className="text-border">|</span>
+            <span className="text-[13px] text-text-3 font-mono">6 agents · x402 · ERC-8004</span>
           </div>
         </div>
       </section>
