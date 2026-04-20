@@ -46,7 +46,8 @@ export default function AgentCard({
   async function handleUse() {
     if (!isConnected) {
       setStatus("error");
-      setResult("Connect your wallet first");
+      setResult("Connect your wallet first. Click 'Connect Wallet' in the top right, then switch to Avalanche Fuji network.");
+      setShowModal(true);
       return;
     }
     setStatus("paying");
@@ -76,17 +77,22 @@ export default function AgentCard({
         payload = { input: "test" };
     }
 
-    const { ok, data, error } = await payAndCall({
-      agentEndpoint: `/api/agents/${serviceType}`,
-      payload,
-    });
+    try {
+      const { ok, data, error } = await payAndCall({
+        agentEndpoint: `/api/agents/${serviceType}`,
+        payload,
+      });
 
-    if (ok) {
-      setStatus("done");
-      setResult(JSON.stringify(data, null, 2));
-    } else {
+      if (ok) {
+        setStatus("done");
+        setResult(JSON.stringify(data, null, 2));
+      } else {
+        setStatus("error");
+        setResult(error || "Unknown error occurred.");
+      }
+    } catch (err) {
       setStatus("error");
-      setResult(error || "Unknown error");
+      setResult(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
   }
 
