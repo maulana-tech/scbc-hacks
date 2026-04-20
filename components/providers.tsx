@@ -3,7 +3,7 @@
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { avalancheFuji, hardhat } from "wagmi/chains";
+import { avalancheFuji, avalanche, hardhat } from "wagmi/chains";
 
 import { SidebarProvider } from "./sidebar-context";
 
@@ -16,9 +16,11 @@ const enableLocal =
 const config = getDefaultConfig({
   appName: "Vaxa",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "demo",
-  // In dev, include local Anvil/Hardhat network (chainId 31337) for easy testing.
-  chains: enableLocal ? [hardhat, avalancheFuji] : [avalancheFuji],
+  chains: enableLocal
+    ? [hardhat, avalancheFuji]
+    : [avalancheFuji, avalanche],
   ssr: true,
+  multiInjectedProviderDiscovery: true,
 });
 
 const queryClient = new QueryClient();
