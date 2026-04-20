@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import SpendRuleForm from "@/components/SpendRuleForm";
 import PaymentHistory from "@/components/PaymentHistory";
 import EscrowForm from "@/components/EscrowForm";
+import { getLocalTransactions, type LocalTransaction } from "@/components/AgentCard";
 import {
   Settings,
   Clock,
@@ -157,8 +158,13 @@ function DashboardContent() {
     }[]
   >([]);
   const [isPaused, setIsPaused] = useState(false);
+  const [localTxs, setLocalTxs] = useState<LocalTransaction[]>([]);
 
   const ownerAddress = address || "";
+
+  useEffect(() => {
+    setLocalTxs(getLocalTransactions());
+  }, [tab]);
 
   useEffect(() => {
     if (!ownerAddress) return;
@@ -559,7 +565,62 @@ function DashboardContent() {
       {tab === "history" && (
         <div>
           <p className="type-caption text-text-3 mb-4">Transactions</p>
-          <PaymentHistory transactions={transactions} />
+          
+          {localTxs.length > 0 && (
+            <div className="mb-6">
+              <h4 className="text-[14px] font-semibold text-text mb-3">Agent Usage</h4>
+              <div className="space-y-2">
+                {localTxs.map((tx) => (
+                  <div key={tx.id} className="border border-border bg-surface rounded-xl px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className={`w-2 h-2 rounded-full ${tx.status === "success" ? "bg-accent" : "bg-red"}`} />
+                      <div>
+                        <span className="text-[13px] font-medium text-text">{tx.agentName}</span>
+                        <div className="text-[11px] text-text-3 font-mono mt-0.5">
+                          {new Date(tx.timestamp).toLocaleString()}
+                          {tx.txHash && (
+                            <> · <a
+                              href={`https://testnet.snowtrace.io/tx/${tx.txHash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-accent hover:underline"
+                            >
+                              {tx.txHash.slice(0, 10)}...
+                            </a></>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-mono text-[13px] text-text font-medium">{tx.amount} USDC</span>
+                      <div className="text-[11px] text-text-3">
+                        {tx.status === "success" ? "Confirmed" : "Failed"}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {transactions.length > 0 && (
+            <div>
+              <h4 className="text-[14px] font-semibold text-text mb-3">PayAgent Transactions</h4>
+              <PaymentHistory transactions={transactions} />
+            </div>
+          )}
+
+          {localTxs.length === 0 && transactions.length === 0 && (
+            <div className="border border-border bg-surface rounded-xl p-10 text-center">
+              <p className="type-body-sm text-text-3">No transactions yet. Use an agent from the marketplace to get started.</p>
+              <Link
+                href="/marketplace"
+                className="inline-flex items-center gap-2 mt-4 text-[13px] text-accent font-medium hover:underline"
+              >
+                Browse Agents <ArrowUpRight size={14} />
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>
