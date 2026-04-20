@@ -52,11 +52,14 @@ export function useAgentPayment() {
     maxBudget?: string;
   }): Promise<{ ok: boolean; data?: unknown; error?: string }> {
     if (!isConnected || !address) {
-      return { ok: false, error: "Wallet not connected" };
+      return { ok: false, error: "Wallet not connected. Please connect your wallet first." };
+    }
+
+    if (!sendTransactionAsync) {
+      return { ok: false, error: "Wallet does not support sending transactions. Try reconnecting." };
     }
 
     try {
-      // Probe for x402 requirement
       const probe = await fetch(params.agentEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,7 +88,6 @@ export function useAgentPayment() {
 
       if (!requirement) return { ok: false, error: "Missing x-payment-required" };
 
-      // Optional budget check (human units)
       if (params.maxBudget) {
         const requiredAmount = Number(requirement.amount) / 10 ** (requirement.decimals ?? 6);
         if (requiredAmount > Number(params.maxBudget)) {
@@ -93,8 +95,8 @@ export function useAgentPayment() {
         }
       }
 
-      // Pay on-chain
       let paymentTxHash: `0x${string}`;
+
       if (requirement.paymentProcessor) {
         const approveData = encodeFunctionData({
           abi: ERC20_ABI,
@@ -162,8 +164,15 @@ export function useAgentPayment() {
 
       const result = await res.json();
       return { ok: true, data: result };
-    } catch (error) {
-      return { ok: false, error: String(error) };
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      if (msg.includes("User rejected") || msg.includes("user rejected") || msg.includes("denied")) {
+        return { ok: false, error: "Transaction rejected by user." };
+      }
+      if (msg.includes("insufficient funds")) {
+        return { ok: false, error: "Insufficient AVAX for gas. Get testnet AVAX from https://faucet.avax.network" };
+      }
+      return { ok: false, error: msg || "Transaction failed. Check your wallet and try again." };
     }
   }
 
