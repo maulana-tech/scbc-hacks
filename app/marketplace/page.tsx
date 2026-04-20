@@ -15,6 +15,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 import AgentDetailModal from "@/components/AgentDetailModal";
+import AgentCard from "@/components/AgentCard";
 
 interface AgentData {
   id: string;
@@ -313,6 +314,27 @@ export default function MarketplacePage() {
         )}
       </section>
 
+      <section className="border-t border-border">
+        <div className="max-w-[1200px] mx-auto px-6 py-12">
+          <h2 className="text-[24px] font-bold tracking-tight text-text mb-2">Try an Agent</h2>
+          <p className="text-[14px] text-text-2 mb-8">Connect your wallet, enter your input, pay per request.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredAgents.map((agent) => (
+              <AgentCard
+                key={agent.id}
+                name={agent.name}
+                serviceType={agent.serviceType}
+                price={agent.price}
+                reputationScore={agent.reputationScore}
+                totalTxCount={agent.totalTxCount}
+                address={agent.address}
+                description={agent.description}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-border bg-surface-muted">
         <div className="max-w-[1200px] mx-auto px-6 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -362,9 +384,9 @@ export default function MarketplacePage() {
         agent={selectedAgent}
         isOpen={!!selectedAgent}
         onClose={() => setSelectedAgent(null)}
-        onTryAgent={(agent) => {
-          console.log("Try agent:", agent);
+        onTryAgent={() => {
           setSelectedAgent(null);
+          document.getElementById("try-agents")?.scrollIntoView({ behavior: "smooth" });
         }}
       />
     </div>
