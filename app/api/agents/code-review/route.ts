@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildPaymentRequired, verifyPaymentOnChain, recordSuccessfulTx } from "@/lib/x402-middleware";
 import { reviewCode } from "@/agents/code-review";
 
-const AGENT_ADDRESS = process.env.CODE_REVIEW_AGENT_ADDRESS || "0x0000000000000000000000000000000000000001";
+const AGENT_ADDRESS = (process.env.CODE_REVIEW_AGENT_ADDRESS || "0x0000000000000000000000000000000000000001").trim();
 const PRICE = "0.05";
 
 export async function POST(req: NextRequest) {

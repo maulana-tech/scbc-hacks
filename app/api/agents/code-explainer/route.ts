@@ -3,7 +3,7 @@ import { buildPaymentRequired, verifyPaymentOnChain, recordSuccessfulTx } from "
 import { explainCode } from "@/agents/code-explainer";
 
 const PRICE = "0.02"; // 0.02 USDC
-const RECIPIENT = process.env.CODE_REVIEW_AGENT_ADDRESS || "0x0000000000000000000000000000000000000001";
+const RECIPIENT = (process.env.CODE_REVIEW_AGENT_ADDRESS || "0x0000000000000000000000000000000000000001").trim();
 
 export async function POST(req: NextRequest) {
   const paymentProof = req.headers.get("x-payment-proof");

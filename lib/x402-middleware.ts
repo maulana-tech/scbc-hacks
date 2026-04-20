@@ -36,17 +36,23 @@ function simpleRequestId(agent: string, token: string, amount: string, expires: 
   return "0x" + hex.repeat(8);
 }
 
+function env(key: string, fallback?: string): string | undefined {
+  const v = process.env[key];
+  if (!v) return fallback;
+  return v.trim() || fallback;
+}
+
 export function buildPaymentRequired(options: X402Options): PaymentRequirement {
-  const chainId = Number(process.env.AVALANCHE_CHAIN_ID || 43113);
+  const chainId = Number(env("AVALANCHE_CHAIN_ID") || 43113);
   const network =
-    process.env.X402_NETWORK || (chainId === 43113 ? "avalanche-fuji" : "local");
+    env("X402_NETWORK") || (chainId === 43113 ? "avalanche-fuji" : "local");
 
   const expiresAt = Math.floor(Date.now() / 1000) + 600;
   const tokenAddress =
-    process.env.USDC_CONTRACT_ADDRESS || "0x5425890C6C9Fc8561a8b4E763b7E6e43b7e9A5F4";
+    env("USDC_CONTRACT_ADDRESS") || "0x5425890C6C9Fc8561a8b4E763b7E6e43b7e9A5F4";
   const amount = parseUnitsSimple(options.price, 6);
   const requestId = simpleRequestId(options.agentAddress, tokenAddress, amount, expiresAt);
-  const paymentProcessor = process.env.PAYMENT_PROCESSOR_CONTRACT;
+  const paymentProcessor = env("PAYMENT_PROCESSOR_CONTRACT");
 
   return {
     version: "1.0",

@@ -3,7 +3,7 @@ import { buildPaymentRequired, verifyPaymentOnChain, recordSuccessfulTx } from "
 import { generateSQL } from "@/agents/sql-generator";
 
 const PRICE = "0.04"; // 0.04 USDC
-const RECIPIENT = process.env.CODE_REVIEW_AGENT_ADDRESS || "0x0000000000000000000000000000000000000001";
+const RECIPIENT = (process.env.CODE_REVIEW_AGENT_ADDRESS || "0x0000000000000000000000000000000000000001").trim();
 
 export async function POST(req: NextRequest) {
   const paymentProof = req.headers.get("x-payment-proof");

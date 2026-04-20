@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildPaymentRequired, verifyPaymentOnChain, recordSuccessfulTx } from "@/lib/x402-middleware";
 import { summarize } from "@/agents/summarizer";
 
-const AGENT_ADDRESS = process.env.SUMMARIZER_AGENT_ADDRESS || "0x0000000000000000000000000000000000000002";
+const AGENT_ADDRESS = (process.env.SUMMARIZER_AGENT_ADDRESS || "0x0000000000000000000000000000000000000002").trim();
 const PRICE = "0.02";
 
 export async function POST(req: NextRequest) {
