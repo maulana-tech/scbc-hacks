@@ -5,7 +5,7 @@ import { useAccount } from "wagmi";
 import { useAgentPayment } from "@/lib/use-agent-payment";
 import {
   Code, FileText, Languages, Database, Regex as RegexIcon, Lightbulb,
-  type LucideIcon, Loader2, Check, AlertCircle, Wallet, ArrowRight, ExternalLink, Copy,
+  type LucideIcon, Loader2, Check, AlertCircle, Wallet, ArrowRight, ExternalLink, Copy, GitBranch,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -248,6 +248,12 @@ export default function AgentCard({
   const [inputDialect, setInputDialect] = useState("postgresql");
   const [inputPattern, setInputPattern] = useState("");
   const [inputFlavor, setInputFlavor] = useState("javascript");
+  const [ghRepo, setGhRepo] = useState("");
+  const [ghPath, setGhPath] = useState("");
+  const [ghPr, setGhPr] = useState("");
+  const [ghLoading, setGhLoading] = useState(false);
+  const [ghFiles, setGhFiles] = useState<string[]>([]);
+  const [ghMode, setGhMode] = useState<"file" | "pr">("file");
 
   const repPct = Math.round((reputationScore / 1000) * 100);
   const repColor = reputationScore >= 800 ? "#b7d941" : reputationScore >= 500 ? "#4ea8f6" : "#e8a830";
@@ -269,6 +275,41 @@ export default function AgentCard({
 
   function handleProceed() {
     setStep("confirm");
+  }
+
+  async function handleGithubLoad() {
+    if (!ghRepo) return;
+    setGhLoading(true);
+    try {
+      if (ghMode === "pr" && ghPr) {
+        const res = await fetch(`/api/github/content?repo=${encodeURIComponent(ghRepo)}&pr=${ghPr}`);
+        const data = await res.json();
+        if (data.error) { setError(data.error); setStep("error"); return; }
+        setInputCode(data.content || "");
+        if (data.files?.[0]) {
+          const ext = data.files[0].split(".").pop();
+          const langMap: Record<string, string> = { ts: "typescript", tsx: "typescript", js: "javascript", py: "python", rs: "rust", go: "go", sol: "solidity" };
+          if (ext && langMap[ext]) setInputLang(langMap[ext]);
+        }
+      } else if (ghPath) {
+        const res = await fetch(`/api/github/content?repo=${encodeURIComponent(ghRepo)}&path=${encodeURIComponent(ghPath)}`);
+        const data = await res.json();
+        if (data.error) { setError(data.error); setStep("error"); return; }
+        setInputCode(data.content || "");
+        if (data.language) setInputLang(data.language);
+      } else {
+        const res = await fetch(`/api/github/content?repo=${encodeURIComponent(ghRepo)}`);
+        const data = await res.json();
+        if (data.error) { setError(data.error); setStep("error"); return; }
+        setGhFiles(data.files || []);
+        return;
+      }
+    } catch {
+      setError("Failed to fetch from GitHub");
+      setStep("error");
+    } finally {
+      setGhLoading(false);
+    }
   }
 
   function buildPayload(): Record<string, unknown> {
@@ -329,9 +370,41 @@ export default function AgentCard({
       case "code-review":
         return (
           <div className="space-y-3">
+            <div className="bg-accent/5 border border-accent/20 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <GitBranch size={14} className="text-accent" />
+                <span className="text-[12px] font-medium text-accent">Load from GitHub</span>
+              </div>
+              <div className="flex gap-2 mb-2">
+                <button onClick={() => setGhMode("file")} className={`text-[11px] px-2 py-1 ${ghMode === "file" ? "bg-accent text-bg" : "border border-border text-text-3"}`}>File</button>
+                <button onClick={() => setGhMode("pr")} className={`text-[11px] px-2 py-1 ${ghMode === "pr" ? "bg-accent text-bg" : "border border-border text-text-3"}`}>PR Diff</button>
+              </div>
+              <div className="flex gap-2">
+                <input value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} placeholder="owner/repo" className="flex-1 bg-bg border border-border text-text text-[12px] px-2 py-1.5 focus:outline-none focus:border-border-strong" />
+                {ghMode === "file" ? (
+                  <>
+                    <input value={ghPath} onChange={(e) => setGhPath(e.target.value)} placeholder="path/to/file.ts" className="flex-1 bg-bg border border-border text-text text-[12px] px-2 py-1.5 focus:outline-none focus:border-border-strong" />
+                    <select value={""} onChange={(e) => { setGhPath(e.target.value); }} className="bg-bg border border-border text-text text-[11px] px-1 py-1 max-w-[140px] focus:outline-none">
+                      <option value="">Pick file</option>
+                      {ghFiles.map((f) => <option key={f} value={f}>{f.split("/").pop()}</option>)}
+                    </select>
+                  </>
+                ) : (
+                  <input value={ghPr} onChange={(e) => setGhPr(e.target.value)} placeholder="PR #" className="w-20 bg-bg border border-border text-text text-[12px] px-2 py-1.5 focus:outline-none focus:border-border-strong" />
+                )}
+                <button onClick={handleGithubLoad} disabled={ghLoading} className="bg-accent text-bg text-[11px] px-3 py-1.5 hover:bg-accent-hover disabled:opacity-50">
+                  {ghLoading ? "..." : "Load"}
+                </button>
+              </div>
+              {!ghPath && !ghPr && ghRepo && (
+                <button onClick={async () => { setGhLoading(true); const r = await fetch(`/api/github/content?repo=${encodeURIComponent(ghRepo)}`); const d = await r.json(); setGhFiles(d.files || []); setGhLoading(false); }} className="text-[11px] text-accent mt-2 hover:underline">
+                  Browse files...
+                </button>
+              )}
+            </div>
             <div>
               <label className="text-[12px] text-text-3 mb-1.5 block">Code</label>
-              <textarea value={inputCode} onChange={(e) => setInputCode(e.target.value)} placeholder="Paste your code here..." rows={6} className="w-full bg-bg border border-border text-text text-[13px] font-mono p-3 focus:outline-none focus:border-border-strong resize-none" />
+              <textarea value={inputCode} onChange={(e) => setInputCode(e.target.value)} placeholder="Paste code or load from GitHub..." rows={8} className="w-full bg-bg border border-border text-text text-[13px] font-mono p-3 focus:outline-none focus:border-border-strong resize-none" />
             </div>
             <div className="flex gap-3">
               <div className="flex-1">
@@ -419,9 +492,22 @@ export default function AgentCard({
       case "code-explainer":
         return (
           <div className="space-y-3">
+            <div className="bg-accent/5 border border-accent/20 p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <GitBranch size={14} className="text-accent" />
+                <span className="text-[12px] font-medium text-accent">Load from GitHub</span>
+              </div>
+              <div className="flex gap-2">
+                <input value={ghRepo} onChange={(e) => setGhRepo(e.target.value)} placeholder="owner/repo" className="flex-1 bg-bg border border-border text-text text-[12px] px-2 py-1.5 focus:outline-none focus:border-border-strong" />
+                <input value={ghPath} onChange={(e) => setGhPath(e.target.value)} placeholder="path/to/file.ts" className="flex-1 bg-bg border border-border text-text text-[12px] px-2 py-1.5 focus:outline-none focus:border-border-strong" />
+                <button onClick={handleGithubLoad} disabled={ghLoading} className="bg-accent text-bg text-[11px] px-3 py-1.5 hover:bg-accent-hover disabled:opacity-50">
+                  {ghLoading ? "..." : "Load"}
+                </button>
+              </div>
+            </div>
             <div>
               <label className="text-[12px] text-text-3 mb-1.5 block">Code to explain</label>
-              <textarea value={inputCode} onChange={(e) => setInputCode(e.target.value)} placeholder="Paste code you want explained..." rows={6} className="w-full bg-bg border border-border text-text text-[13px] font-mono p-3 focus:outline-none focus:border-border-strong resize-none" />
+              <textarea value={inputCode} onChange={(e) => setInputCode(e.target.value)} placeholder="Paste code or load from GitHub..." rows={8} className="w-full bg-bg border border-border text-text text-[13px] font-mono p-3 focus:outline-none focus:border-border-strong resize-none" />
             </div>
             <div>
               <label className="text-[12px] text-text-3 mb-1.5 block">Language</label>
