@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -9,6 +9,7 @@ import {
   Settings,
   Clock,
   Wallet,
+  Shield,
   PanelLeftClose,
   PanelLeftOpen,
   type LucideIcon,
@@ -23,13 +24,14 @@ const navSections: NavSection[] = [
     title: "Main",
     items: [
       { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-      { href: "/", label: "Marketplace", icon: Store },
+      { href: "/marketplace", label: "Marketplace", icon: Store },
     ],
   },
   {
     title: "PayAgent",
     items: [
       { href: "/dashboard?tab=rules", label: "Spend Rules", icon: Settings },
+      { href: "/dashboard?tab=escrow", label: "Escrow", icon: Wallet },
       { href: "/dashboard?tab=history", label: "History", icon: Clock },
     ],
   },
@@ -135,6 +137,7 @@ function SidebarSection({
   isFirst: boolean;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   return (
     <div className={`${collapsed ? "mb-2" : "mb-5"} ${isFirst ? "mt-0" : ""}`}>
@@ -145,13 +148,14 @@ function SidebarSection({
       )}
       <ul className={collapsed ? "flex flex-col gap-1" : ""}>
         {section.items.map((item) => {
-          const isExact = pathname === item.href;
-          const isActive =
-            item.href === "/dashboard"
-              ? pathname === "/dashboard"
-              : item.href === "/"
-                ? pathname === "/"
-                : isExact;
+          const [itemPath, itemQuery] = item.href.split("?");
+          const itemTab = new URLSearchParams(itemQuery || "").get("tab");
+          const currentTab = searchParams.get("tab");
+          const isActive = pathname === itemPath && (
+            !itemTab
+              ? !currentTab || currentTab === "overview"
+              : currentTab === itemTab
+          );
           return (
             <li
               key={item.href}
