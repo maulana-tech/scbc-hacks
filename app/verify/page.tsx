@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAccount, useSignMessage } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Copy, Check, AlertCircle } from "lucide-react";
+import { Copy, Check, AlertCircle, Wallet } from "lucide-react";
 import Link from "next/link";
 
 function buildVerificationMessage(address: string, nonce: string, telegramId: string): string {
@@ -13,26 +13,26 @@ function buildVerificationMessage(address: string, nonce: string, telegramId: st
 
 function VerifyContent() {
   const searchParams = useSearchParams();
-  const { isConnected } = useAccount();
+  const { address: walletAddress, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const [signature, setSignature] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [signing, setSigning] = useState(false);
 
-  const address = searchParams.get("address") || "";
+  const urlAddress = searchParams.get("address") || "";
   const tid = searchParams.get("tid") || "";
   const nonce = searchParams.get("nonce") || "";
 
-  const message = address && tid && nonce
-    ? buildVerificationMessage(address, nonce, tid)
-    : "";
-
-  const hasParams = !!(address && tid && nonce);
+  const hasParams = !!(tid && nonce);
+  const address = walletAddress || urlAddress;
+  const message = hasParams && address ? buildVerificationMessage(address, nonce, tid) : "";
 
   useEffect(() => {
-    if (!hasParams) return;
-  }, [hasParams]);
+    if (signature && walletAddress && walletAddress.toLowerCase() !== address.toLowerCase()) {
+      setSignature("");
+    }
+  }, [walletAddress]);
 
   async function handleSign() {
     if (!message) return;
@@ -75,48 +75,58 @@ function VerifyContent() {
               This page should be opened from the Telegram bot link.
             </p>
             <p className="text-[13px] text-text-3">
-              Send <code className="text-accent">/connect 0xYourAddress</code> in Telegram to get the verification link.
+              Send <code className="text-accent">/connect</code> in Telegram to get the verification link.
             </p>
           </div>
         ) : (
           <div className="space-y-5">
-            <div className="bg-surface border border-border p-5">
-              <label className="text-[13px] font-semibold text-text mb-2 block">
-                Message to sign
-              </label>
-              <div className="bg-bg border border-border p-3">
-                <pre className="text-[12px] text-text-2 font-mono whitespace-pre-wrap break-all leading-relaxed">{message}</pre>
+            {isConnected && walletAddress && (
+              <div className="bg-accent/5 border border-accent/20 p-4 flex items-center gap-3">
+                <Wallet size={18} className="text-accent" />
+                <div>
+                  <span className="text-[12px] text-text-3">Connected wallet:</span>
+                  <p className="text-[13px] font-mono text-text font-medium">{walletAddress}</p>
+                </div>
               </div>
-            </div>
+            )}
+
+            {message && (
+              <div className="bg-surface border border-border p-5">
+                <label className="text-[13px] font-semibold text-text mb-2 block">
+                  Message to sign
+                </label>
+                <div className="bg-bg border border-border p-3">
+                  <pre className="text-[12px] text-text-2 font-mono whitespace-pre-wrap break-all leading-relaxed">{message}</pre>
+                </div>
+              </div>
+            )}
 
             <div className="bg-surface border border-border p-5">
               <label className="text-[13px] font-semibold text-text mb-3 block">
                 Connect wallet & sign
               </label>
               {!isConnected ? (
-                <div className="flex items-center gap-4">
-                  <ConnectButton.Custom>
-                    {({ openConnectModal, mounted }) => (
-                      <div
-                        {...(!mounted && {
-                          "aria-hidden": true,
-                          style: { opacity: 0, pointerEvents: "none", userSelect: "none" },
-                        })}
+                <ConnectButton.Custom>
+                  {({ openConnectModal, mounted }) => (
+                    <div
+                      {...(!mounted && {
+                        "aria-hidden": true,
+                        style: { opacity: 0, pointerEvents: "none", userSelect: "none" },
+                      })}
+                    >
+                      <button
+                        onClick={openConnectModal}
+                        className="h-10 px-6 bg-accent text-bg text-[14px] font-medium hover:bg-accent-hover transition-colors"
                       >
-                        <button
-                          onClick={openConnectModal}
-                          className="h-10 px-6 bg-accent text-bg text-[14px] font-medium hover:bg-accent-hover transition-colors"
-                        >
-                          Connect Wallet
-                        </button>
-                      </div>
-                    )}
-                  </ConnectButton.Custom>
-                </div>
+                        Connect Wallet
+                      </button>
+                    </div>
+                  )}
+                </ConnectButton.Custom>
               ) : (
                 <button
                   onClick={handleSign}
-                  disabled={signing}
+                  disabled={signing || !message}
                   className="h-10 px-6 bg-accent text-bg text-[14px] font-medium hover:bg-accent-hover transition-colors disabled:opacity-50"
                 >
                   {signing ? "Waiting for signature..." : "Sign Message"}
@@ -155,7 +165,7 @@ function VerifyContent() {
             <div className="bg-bg border border-border p-4 text-[13px] text-text-3 leading-relaxed">
               <strong className="text-text">How it works:</strong>
               <ol className="mt-2 space-y-1.5 list-decimal pl-4">
-                <li>In Telegram, send <code className="text-accent">/connect 0xYourAddress</code></li>
+                <li>In Telegram, send <code className="text-accent">/connect</code></li>
                 <li>Click the link the bot replies with</li>
                 <li>Connect wallet & sign the message</li>
                 <li>Copy the signature and send <code className="text-accent">/verify &lt;signature&gt;</code> in Telegram</li>
