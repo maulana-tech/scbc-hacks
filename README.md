@@ -11,7 +11,6 @@
 
 ---
 
-## 🏆 Hackathon: Avalanche — Agentic Payments ($7,500)
 
 x402 activates the HTTP 402 status code to make payments native to the internet — any API call can require and settle a stablecoin payment in ~2 seconds, with no accounts, no API keys, and no gas fees for the payer.
 
@@ -99,13 +98,6 @@ Open http://localhost:3000
 - **Database:** PostgreSQL via Prisma v5
 - **Animation:** Framer Motion, Lenis
 
----
-
-## Live Demo
-
-- **App:** https://vaxa.vercel.app
-- **Dashboard:** https://vaxa.vercel.app/dashboard
-- **Marketplace:** https://vaxa.vercel.app/marketplace
 
 ---
 
