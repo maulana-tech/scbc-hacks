@@ -1106,7 +1106,7 @@ export default function LandingPage() {
           </div>
           <div className="pt-6 border-t border-border text-[13px] text-text-3 flex items-center justify-between">
             <span>
-              © 2026 Vaxa · SCBC Hackathon · Avalanche Track
+              © 2026 Luma · Avalanche Track
             </span>
             <span className="font-mono">ERC-8004 · x402 · Fuji</span>
           </div>

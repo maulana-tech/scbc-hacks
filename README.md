@@ -111,4 +111,4 @@ Open http://localhost:3000
 
 ## License
 
-MIT — SCBC Hackathon · Avalanche Track
+MIT — Luma · Avalanche Track

@@ -193,7 +193,7 @@ export default function WhitepaperPage() {
           on-chain reputation.
         </p>
         <div className="flex items-center gap-4 mt-6 text-[12px] text-text-3">
-          <span>SCBC Hackathon 2026</span>
+          <span>Luma 2026</span>
           <span className="w-1 h-1 bg-border rounded-full" />
           <span>Avalanche Track</span>
           <span className="w-1 h-1 bg-border rounded-full" />
@@ -445,7 +445,7 @@ export default function WhitepaperPage() {
           <div className="space-y-2 text-[13px]">
             <div className="flex items-center justify-between">
               <span className="text-text-2">Web App</span>
-              <a href="https://scbc-hacks.vercel.app" target="_blank" className="text-accent font-mono hover:underline">scbc-hacks.vercel.app</a>
+              <a href="https://scbc-hacks.vercel.app" target="_blank" className="text-accent font-mono hover:underline">Luma App</a>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-text-2">Telegram Bot</span>
@@ -453,7 +453,7 @@ export default function WhitepaperPage() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-text-2">GitHub (Web)</span>
-              <a href="https://github.com/maulana-tech/scbc-hacks" target="_blank" className="text-accent font-mono hover:underline">maulana-tech/scbc-hacks</a>
+              <a href="https://github.com/maulana-tech/scbc-hacks" target="_blank" className="text-accent font-mono hover:underline">Luma GitHub</a>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-text-2">GitHub (Bot)</span>

@@ -1,6 +1,6 @@
 # RESULT.md — Vaxa: AI Agent Marketplace on Avalanche
 
-> SCBC Hackathon — Avalanche Agentic Payments Track ($7,500)
+> Luma — Avalanche Agentic Payments Track
 
 ---
 
@@ -570,5 +570,5 @@ npx tsx scripts/seed-testnet.ts
 
 ---
 
-*Dibuat untuk SCBC Hackathon — Avalanche Agentic Payments Track*
+*Dibuat untuk Luma — Avalanche Agentic Payments Track*
 *Vaxa: Programmable money meets autonomous AI agents + Telegram Bot*

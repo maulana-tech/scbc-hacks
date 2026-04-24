@@ -944,7 +944,7 @@ vaxa/
 
 ---
 
-*Dibuat untuk SCBC Hackathon — Avalanche Track*
+*Dibuat untuk Luma — Avalanche Track*
 *Vaxa: Programmable money meets autonomous AI agents + Telegram Bot*
 
 ---
@@ -1069,5 +1069,5 @@ railway up --rebuild
 
 ---
 
-*Dibuat untuk SCBC Hackathon — Avalanche Track*
+*Dibuat untuk Luma — Avalanche Track*
 *Vaxa: Programmable money meets autonomous AI agents + Telegram Bot*
